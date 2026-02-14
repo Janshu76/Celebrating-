@@ -2,10 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Our Love Magazine</title>
-
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/4.1.0/turn.min.js"></script>
+<title>Romantic Magazine</title>
 
 <style>
 body {
@@ -15,69 +12,99 @@ body {
     justify-content: center;
     align-items: center;
     height: 100vh;
-    overflow: hidden;
     font-family: Georgia, serif;
+    overflow: hidden;
 }
 
-#flipbook {
+.book {
+    position: relative;
     width: 900px;
     height: 600px;
-    box-shadow: 0 0 60px rgba(255, 0, 0, 0.5);
+    perspective: 2000px;
 }
 
-#flipbook img {
+.page {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    transform-origin: left;
+    transition: transform 1s;
+    backface-visibility: hidden;
+}
+
+.page img {
     width: 100%;
     height: 100%;
 }
 
-/* Romantic title overlay */
-#intro {
-    position: absolute;
-    top: 20px;
-    text-align: center;
-    color: #ffb3b3;
-    font-size: 28px;
-    letter-spacing: 2px;
-    text-shadow: 0 0 10px red;
+.page.flipped {
+    transform: rotateY(-180deg);
+}
+
+.controls {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+}
+
+button {
+    padding: 10px 15px;
+    background: #8b0000;
+    color: white;
+    border: none;
+    margin: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #b30000;
 }
 </style>
 </head>
 
 <body>
 
-<div id="intro">A Story Written in Red</div>
+<div class="book" id="book">
+</div>
 
-<audio id="bgmusic" loop>
+<div class="controls">
+    <button onclick="prevPage()">Prev</button>
+    <button onclick="nextPage()">Next</button>
+</div>
+
+<audio id="bgmusic" loop controls style="position:fixed; bottom:20px; left:20px;">
     <source src="music.mp3" type="audio/mpeg">
 </audio>
 
-<div id="flipbook">
-    <div><img src="page1.jpg"></div>
-    <div><img src="page2.jpg"></div>
-    <div><img src="page3.jpg"></div>
-    <div><img src="page4.jpg"></div>
-    <div><img src="page5.jpg"></div>
-    <div><img src="page6.jpg"></div>
-    <div><img src="page7.jpg"></div>
-    <div><img src="page8.jpg"></div>
-    <div><img src="page9.jpg"></div>
-    <div><img src="page10.jpg"></div>
-    <div><img src="page11.jpg"></div>
-</div>
-
 <script>
-$("#flipbook").turn({
-    width: 900,
-    height: 600,
-    autoCenter: true,
-    elevation: 50,
-    gradients: true
-});
+const totalPages = 11;
+const book = document.getElementById("book");
+let currentPage = 0;
 
-// Autoplay after first interaction (browser rule)
-document.body.addEventListener('click', function() {
-    document.getElementById('bgmusic').play();
-});
+// Create pages dynamically
+for (let i = 1; i <= totalPages; i++) {
+    const page = document.createElement("div");
+    page.className = "page";
+    page.style.zIndex = totalPages - i;
+    page.innerHTML = `<img src="page${i}.jpg">`;
+    book.appendChild(page);
+}
+
+const pages = document.querySelectorAll(".page");
+
+function nextPage() {
+    if (currentPage < totalPages) {
+        pages[currentPage].classList.add("flipped");
+        currentPage++;
+    }
+}
+
+function prevPage() {
+    if (currentPage > 0) {
+        currentPage--;
+        pages[currentPage].classList.remove("flipped");
+    }
+}
 </script>
 
 </body>
